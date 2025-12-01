@@ -1,0 +1,36 @@
+name: Run Sydney Weekly Report
+
+on:
+  workflow_dispatch:   # allow manual trigger
+  schedule:
+    - cron: "0 2 * * MON"   # every Monday at 2 AM (IST ~ 7:30 AM)
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Step 4: Run script
+      - name: Run Sydney Report Script
+        run: python clean_and_insights_sydney.py
+
+      # Step 5: Upload output Excel as artifact (optional)
+      - name: Upload Excel Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: updated-report
+          path: "*.xlsx"
